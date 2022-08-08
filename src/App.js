@@ -1,10 +1,13 @@
 
 import './App.css';
+import React from 'react';
+import Field from './components/Field.jsx';
+
 
 const App = () => {
   return (
     <div className="App">
-      1
+      <Field countField="5"/>
     </div>
   );
 }
