@@ -19,3 +19,6 @@
 .cell:nth-child(odd) {
 	background: greenyellow;
 }
+.cursor {
+	cursor: pointer;
+}

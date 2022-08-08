@@ -1,9 +1,9 @@
 import React from "react";
 
-const Cell = ({x, y, figure}) => {
+const Cell = ({x, y, figure, style, onClick}) => {
 
     return (
-        <div className="cell">{x+''+y}</div>
+        <div className="cell" onClick={onClick}>{/* {x+''+y} */}{figure}</div>
     );
 }
 

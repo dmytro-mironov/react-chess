@@ -2,13 +2,18 @@
 import './App.css';
 import React from 'react';
 import Field from './components/Field.jsx';
+import { Provider } from "react-redux";
+import store from './redux/store';
 
 
 const App = () => {
   return (
-    <div className="App">
-      <Field countField="5"/>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Field countField="5"/>
+      </div>
+    </Provider>
+
   );
 }
 
