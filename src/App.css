@@ -18,10 +18,10 @@
 	justify-content: center;
 }
 .cell:nth-child(even) {
-	background: green;
+	background: #faffa6;
 }
 .cell:nth-child(odd) {
-	background: greenyellow;
+	background: #ff8f2f;
 }
 .cursor {
 	cursor: pointer;
