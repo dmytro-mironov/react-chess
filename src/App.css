@@ -3,15 +3,19 @@
 }
 
 .board {
-	width: calc(65px * 5);
-	height: calc(65px * 5);
+	width: calc(85px * 5);
+	height: calc(85px * 5);
 	display: flex;
 	flex-wrap: wrap;
 	margin: 0 auto;
 }
 .cell {
-	width: 65px;
-	height: 65px;
+	width: 85px;
+	height: 85px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .cell:nth-child(even) {
 	background: green;
@@ -24,4 +28,19 @@
 }
 .choose {
 	background: red !important;
+}
+.can_stay::after {
+	content: '';
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	display: block;
+	background: blue;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.img_figure {
+	max-width: 65px;
 }

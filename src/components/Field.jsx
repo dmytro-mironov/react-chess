@@ -5,38 +5,111 @@ import { setChooseField, setFields } from "../redux/actions/fields";
 import store from "../redux/store";
 import Cell from "./Cell";
 
+import whitePawn from "../assets/pawn-w.png";
+import blackPawn from "../assets/pawn-b.png";
+import blackHorse from "../assets/horse-b.png";
+import whiteHorse from "../assets/horse-w.png";
+import whiteQueen from "../assets/queen-w.png"
+import blackQueen from "../assets/queen-b.png"
+import blackKing from "../assets/king-b.png"
+import whiteKing from "../assets/king-w.png"
 
 
 const clickFigule = (x,y) => {
 
     const chooseFiel = store.getState().fieldsReducer.chooseFiel;
     const fields = store.getState().fieldsReducer.fields;
-    //field choose and can move
-    console.dir({x,y})
-    if(chooseFiel){
-        fields[x+''+y].html = <Cell key={x+''+y} x={x} y={y} figure={fields[chooseFiel.x+''+chooseFiel.y].html.props.figure} onClick={() => clickFigule(x,y)}/>
-        fields[x+''+y].isFigure = true
 
-        fields[chooseFiel.x+''+chooseFiel.y].html = <Cell key={chooseFiel.x+''+chooseFiel.y} x={chooseFiel.x} y={chooseFiel.y} onClick={() => clickFigule(chooseFiel.x,chooseFiel.y)}/>
-        fields[chooseFiel.x+''+chooseFiel.y].isFigure = false
+    let currentFigure = fields[x+''+y];
+    //field choose and can move
+    if(chooseFiel && currentFigure.can_stay == true){
+
+        //new place
+        currentFigure.html = <Cell key={x+''+y} x={x} y={y} figure={fields[chooseFiel.x+''+chooseFiel.y].html.props.figure} onClick={() => clickFigule(x,y)}/>
+        currentFigure.isFigure = true;
+        currentFigure.type = fields[chooseFiel.x+''+chooseFiel.y].type;
+        currentFigure.gamer = fields[chooseFiel.x+''+chooseFiel.y].gamer;
         
+        //old place
+        fields[chooseFiel.x+''+chooseFiel.y].html = <Cell key={chooseFiel.x+''+chooseFiel.y} x={chooseFiel.x} y={chooseFiel.y} onClick={() => clickFigule(chooseFiel.x,chooseFiel.y)}/>
+        fields[chooseFiel.x+''+chooseFiel.y].isFigure = false;
+        fields[chooseFiel.x+''+chooseFiel.y].type = false;
+        fields[chooseFiel.x+''+chooseFiel.y].gamer = false;
+
+        //fefresh field can stay to false
+        Object.keys(fields).map((key,index)=> {
+            if(fields[key].can_stay){
+                fields[key].can_stay = false;
+                fields[key].html = <Cell key={ fields[key].x+''+ fields[key].y} x={fields[key].x} y={fields[key].y} figure={ fields[key].html.props.figure} onClick={() => clickFigule(fields[key].x,fields[key].y)}/>
+            }
+        });
+
         store.dispatch(setFields(fields));
         store.dispatch(setChooseField(false));
 
-    }else if(fields[x+''+y].isFigure){
 
-        fields[x+''+y].html = <Cell key={x+''+y} x={x} y={y} figure={fields[x+''+y].html.props.figure} style="choose" onClick={() => clickFigule(x,y)}/>
+    }else if(currentFigure.isFigure && !chooseFiel){
+        //select figure
+        currentFigure.html = <Cell key={x+''+y} x={x} y={y} figure={currentFigure.html.props.figure} style="choose" onClick={() => clickFigule(x,y)}/>
+
+        if(currentFigure.type == 'front' && currentFigure.x < 5 && currentFigure.x > 0){
+            //first player + 1
+            //second player - 1
+            let direction = currentFigure.gamer === 1 ? 1 : -1;
+            if(!fields[currentFigure.x + direction+''+y]?.isFigure){
+                fields[currentFigure.x + direction+''+y].html = <Cell key={x+direction+''+y} x={x+direction} y={y} style="can_stay" onClick={() => clickFigule(x+direction,y)}/>;
+                fields[currentFigure.x + direction+''+y].can_stay = true;
+            }
+ 
+
+            if(fields[currentFigure.x + direction+''+parseInt(y+1)]?.isFigure && currentFigure.gamer !== fields[currentFigure.x + direction+''+parseInt(y+1)]?.gamer){
+
+                fields[currentFigure.x + direction+''+parseInt(y+1)].html = <Cell key={currentFigure.x + direction+''+parseInt(y+1)} 
+                                                                    x={currentFigure.x + direction} 
+                                                                    y={parseInt(y+1)} 
+                                                                    style="can_stay" 
+                                                                    figure={fields[currentFigure.x + direction+''+parseInt(parseInt(y+1))].html.props.figure}
+                                                                    onClick={() => clickFigule(currentFigure.x + direction,parseInt(y+1))}/>;
+                fields[currentFigure.x + direction+''+parseInt(y+1)].can_stay = true;
+
+            }
+            if(fields[currentFigure.x + direction+''+y-1]?.isFigure && currentFigure.gamer !== fields[currentFigure.x + direction+''+y-1]?.gamer){
+                
+                fields[currentFigure.x + direction+''+y-1].html = <Cell key={currentFigure.x + direction+''+y-1} 
+                                                                    x={currentFigure.x + direction} 
+                                                                    y={y-1} 
+                                                                    style="can_stay" 
+                                                                    figure={fields[currentFigure.x + direction+''+y-1].html.props.figure}
+                                                                    onClick={() => clickFigule(currentFigure.x + direction,y-1)}/>;
+                fields[currentFigure.x + direction+''+y-1].can_stay = true;
+
+            }
+        }
+
         store.dispatch(setFields(fields));
         store.dispatch(setChooseField({x,y}));
-
+    }else if(currentFigure.isFigure && chooseFiel && currentFigure.x == chooseFiel.x && currentFigure.y == chooseFiel.y){
+        //clear all if you click again
+        currentFigure.html = <Cell key={x+''+y} x={x} y={y} figure={currentFigure.html.props.figure} onClick={() => clickFigule(x,y)}/>
+        Object.keys(fields).map((key,index)=> {
+            if(fields[key].can_stay){
+                fields[key].can_stay = false;
+                fields[key].html = <Cell key={ fields[key].x+''+ fields[key].y} x={fields[key].x} y={fields[key].y} figure={ fields[key].html.props.figure} onClick={() => clickFigule(fields[key].x,fields[key].y)}/>
+            }
+        });
+        store.dispatch(setFields(fields));
+        store.dispatch(setChooseField(false));
     }
 
 
 }
 
-const setFigure = ({fiel, x,y, figure, img}) => {
+const setFigure = ({fiel, x,y, figure, type, gamer}) => {
     fiel[x+''+y].html = <Cell key={x+''+y} x={x} y={y} figure={figure} style="cursor" onClick={() => clickFigule(x,y)}/>;
     fiel[x+''+y].isFigure = true;
+    fiel[x+''+y].type = type;
+    fiel[x+''+y].gamer = gamer;
+
     return fiel;
 }
 
@@ -61,9 +134,25 @@ const Field = ({ countField = 5}) => {
             }
         }
         
-        setFigure({fiel, x:1, y:1, figure:'que',});
-        setFigure({fiel, x:1, y:2, figure:'que',});
-        setFigure({fiel, x:3, y:3, figure:'que',});
+        setFigure({fiel, x:1, y:4, figure: whiteHorse,type: "horse", gamer: 1});
+        setFigure({fiel, x:1, y:2, figure: whiteKing,type: "king", gamer: 1});
+        setFigure({fiel, x:1, y:3, figure: whiteQueen,type: "queen", gamer: 1});
+        setFigure({fiel, x:2, y:1, figure: whitePawn,type: "front", gamer: 1});
+        setFigure({fiel, x:2, y:2, figure: whitePawn,type: "front", gamer: 1});
+        setFigure({fiel, x:2, y:3, figure: whitePawn,type: "front", gamer: 1});
+        setFigure({fiel, x:2, y:4, figure: whitePawn,type: "front", gamer: 1});
+        setFigure({fiel, x:2, y:5, figure: whitePawn,type: "front", gamer: 1});
+
+
+        setFigure({fiel, x:4, y:1, figure: blackPawn,type: "front", gamer: 2});
+        setFigure({fiel, x:4, y:2, figure: blackPawn,type: "front", gamer: 2});
+        setFigure({fiel, x:4, y:3, figure: blackPawn,type: "front", gamer: 2});
+        setFigure({fiel, x:4, y:4, figure: blackPawn,type: "front", gamer: 2});
+        setFigure({fiel, x:4, y:5, figure: blackPawn,type: "front", gamer: 2});
+        setFigure({fiel, x:5, y:3, figure: blackQueen,type: "queen", gamer: 1});
+        setFigure({fiel, x:5, y:2, figure: blackKing,type: "king", gamer: 1});
+        setFigure({fiel, x:5, y:4, figure: blackHorse,type: "horse", gamer: 1});
+
 
         
         dispatch(setFields(fiel));

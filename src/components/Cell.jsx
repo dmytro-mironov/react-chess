@@ -5,10 +5,13 @@ const Cell = ({x, y, figure, style, onClick}) => {
 
     let cellStyle = classNames('cell',{
         'choose': style == 'choose',
+        'can_stay': style == 'can_stay',
     });
 
     return (
-        <div className={cellStyle} onClick={onClick}>{/* {x+''+y} */}{figure}</div>
+        <div className={cellStyle} onClick={onClick}>{/* {x+''+y} */}
+            <img className="img_figure" src={figure} alt="" />
+        </div>
     );
 }
 
