@@ -22,3 +22,6 @@
 .cursor {
 	cursor: pointer;
 }
+.choose {
+	background: red !important;
+}

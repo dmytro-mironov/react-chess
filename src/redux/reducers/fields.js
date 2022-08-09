@@ -1,6 +1,7 @@
 
 const initialState ={
     fields: [],
+    chooseFiel: false,
 }
 
 const fieldsReducer = (state = initialState, actions) => {
@@ -11,6 +12,11 @@ const fieldsReducer = (state = initialState, actions) => {
                 fields: actions.payload
             }
         break;
+        case 'SET_CHOOSE_FIELD':
+            return {
+                ...state,
+                chooseFiel: actions.payload
+            }
         default: 
             return state;
     }
