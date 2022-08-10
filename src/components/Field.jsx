@@ -234,7 +234,7 @@ const Field = ({ countField = 5}) => {
                 {Object.keys(fields).map((key,index)=> fields[key].html)}
             </div>
             <div>
-                {true ? (
+                {isMat ? (
                     <div>Player {turnGamer == 1 ? 2 : 1} made mat</div>
                 ) : ''}
             </div>
