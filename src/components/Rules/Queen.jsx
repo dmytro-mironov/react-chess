@@ -4,14 +4,20 @@ import { clickFigule } from "../Field";
 
 export const checkFieldQueen = (field, x, y, currentFigure, check = true) => {
 
+    //check is field and field is not our figure
     if(field?.gamer !== currentFigure.gamer && field && check){
         field.html = <Cell key={x+''+y} style="can_stay" figure={field.html?.props.figure} 
                                     onClick={() => clickFigule(x, y)}/>;
         field.can_stay = true;
-    }else if(field?.type === 'queen' || field?.type === 'king'){
+        if(field.gamer !== currentFigure.gamer && field?.isFigure){
+            check = false;
+        }
+    }else if((field?.type === 'queen' || field?.type === 'king') && field?.gamer == currentFigure.gamer){
+        //check to possible change beetwen king and queen
         field.html = <Cell key={x+''+y} style="can_stay" figure={field.html?.props.figure} 
                                     onClick={() => clickFigule(x, y)}/>;
         field.change_place = true;
+        check = false;
     }else{
         check = false;
     }

@@ -12,3 +12,13 @@ export const setTurnGamer = (player) => ({
     type: "SET_TURN_PLAYER",
     payload: player
 });
+
+export const setHistory = (turn) => ({
+    type: "SET_HISTORY",
+    payload: turn
+})
+
+export const setControl = (position) => ({
+    type: "SET_CONTROL",
+    payload: position
+});

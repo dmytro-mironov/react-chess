@@ -10,6 +10,9 @@
 	flex-wrap: wrap;
 	margin: 0 auto;
 }
+.control_select {
+	background: #ff04303d !important;
+}
 .cell {
 	width: 85px;
 	height: 85px;
@@ -44,4 +47,24 @@
 }
 .img_figure {
 	max-width: 65px;
+}
+.history {
+	height: 80vh;
+	overflow-y: scroll;
+}
+.history ul {
+	padding: 0;
+}
+.history li {
+	display: block;
+	text-align: left;
+	border: 1px solid;
+	border-bottom: 0;
+	padding: 10px;
+}
+.history li:first-child {
+	border-bottom: 0;
+}
+.history li:last-child {
+	border-bottom: 1px solid;
 }

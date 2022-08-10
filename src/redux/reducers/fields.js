@@ -3,6 +3,8 @@ const initialState ={
     fields: [],
     chooseFiel: false,
     turnGamer: 1,
+    history: [],
+    controlKeyBoardPos: {x: 3, y:3},
 }
 
 const fieldsReducer = (state = initialState, actions) => {
@@ -21,7 +23,17 @@ const fieldsReducer = (state = initialState, actions) => {
         case 'SET_TURN_PLAYER':
             return {
                 ...state,
-                turnGamer: actions.payload == 1 ? 2 : 1
+                turnGamer: actions.payload === 1 ? 2 : 1
+            }
+        case 'SET_HISTORY':
+            return {
+                ...state,
+                history: [...state.history, actions.payload],
+            }
+        case 'SET_CONTROL':
+            return {
+                ...state,
+                controlKeyBoardPos: actions.payload
             }
         default: 
             return state;

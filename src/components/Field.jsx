@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setChooseField, setFields, setTurnGamer } from "../redux/actions/fields";
+import { setChooseField, setControl, setFields, setHistory, setTurnGamer } from "../redux/actions/fields";
 import store from "../redux/store";
 import Cell from "./Cell";
 
@@ -19,10 +19,53 @@ import showRulesQueen from "./Rules/Queen";
 import showRulesKing from "./Rules/King";
 
 
+const controlSelector = (e) => {
+
+    const fields = store.getState().fieldsReducer.fields;
+    const control = store.getState().fieldsReducer.controlKeyBoardPos;
+    const chooseFiel = store.getState().fieldsReducer.chooseFiel;
+
+    let oldControl = {...control};
+    
+    let style_old = '';
+    //clean old
+    if(fields[oldControl.x+''+oldControl.y].can_stay){
+        style_old="can_stay"
+    }else if(chooseFiel.x == oldControl.x && chooseFiel.y == oldControl.y){
+        style_old="choose"
+    }
+    
+    fields[oldControl.x+''+oldControl.y].html = <Cell key={oldControl.x+''+oldControl.y} figure={fields[oldControl.x+''+oldControl.y].html.props.figure} style={style_old} onClick={() => clickFigule(oldControl.x,oldControl.y)}/>;
+
+    if(e.keyCode == 38 || e.keyCode == 87){
+        control.x = control.x != 1 ? --control.x : control.x;
+    }else if(e.keyCode == 40 || e.keyCode == 83){
+        control.x = control.x != 5 ? ++control.x : control.x;
+    }else if(e.keyCode == 39 || e.keyCode == 68){
+        control.y = control.y != 5 ? ++control.y : control.y;
+    }else if(e.keyCode == 37 || e.keyCode == 65){
+        control.y = control.y != 1 ? --control.y : control.y;
+    }
+    
+    //new 
+    if(e.keyCode == 13){
+        clickFigule(control.x, control.y);
+    }
+    fields[control.x+''+control.y].html = <Cell key={control.x+''+control.y} figure={fields[control.x+''+control.y].html.props.figure} style="control_select" onClick={() => clickFigule(control.x,control.y)}/>;
+   
+    store.dispatch(setControl({x:control.x, y: control.y}));
+    store.dispatch(setFields(fields));
+    
+
+}
+//fefresh field can stay to false
 const refreshField = ({ fields, store, currentFigure}) => {
     Object.keys(fields).map((key,_)=> {
         if(fields[key].can_stay){
             fields[key].can_stay = false;
+            fields[key].html = <Cell key={ fields[key].x+''+ fields[key].y}  figure={ fields[key].html.props.figure} onClick={() => clickFigule(fields[key].x,fields[key].y)}/>
+        }else if(fields[key].change_place){
+            fields[key].change_place = false;
             fields[key].html = <Cell key={ fields[key].x+''+ fields[key].y}  figure={ fields[key].html.props.figure} onClick={() => clickFigule(fields[key].x,fields[key].y)}/>
         }
     });
@@ -54,7 +97,13 @@ export const clickFigule = (x,y) => {
         fields[chooseFiel.x+''+chooseFiel.y].type = false;
         fields[chooseFiel.x+''+chooseFiel.y].gamer = false;
 
-        //fefresh field can stay to false
+        store.dispatch(setHistory({
+            gamer: currentFigure.gamer,
+            from: {x: chooseFiel.x, y: chooseFiel.y},
+            to: {x,y},
+            figure: currentFigure.type
+        }));
+        
         store.dispatch(setTurnGamer(currentFigure.gamer));
         refreshField({fields, store, currentFigure});
 
@@ -75,6 +124,13 @@ export const clickFigule = (x,y) => {
         fields[chooseFiel.x+''+chooseFiel.y].isFigure = true;
         fields[chooseFiel.x+''+chooseFiel.y].type = oldFigure.type;
         fields[chooseFiel.x+''+chooseFiel.y].gamer = oldFigure.gamer;
+
+        store.dispatch(setHistory({
+            gamer: currentFigure.gamer,
+            from: {x: chooseFiel.x, y: chooseFiel.y},
+            to: {x,y},
+            figure: currentFigure.type
+        }));
 
         store.dispatch(setTurnGamer(currentFigure.gamer));
         refreshField({fields, store, currentFigure});
@@ -98,8 +154,6 @@ export const clickFigule = (x,y) => {
         store.dispatch(setChooseField({x,y}));
 
     }else if(currentFigure?.isFigure && chooseFiel && currentFigure.x == chooseFiel.x && currentFigure.y == chooseFiel.y){
-        console.dir("4");
-
         //clear all if you click again
         currentFigure.html = <Cell key={x+''+y} x={x} y={y} figure={currentFigure.html.props.figure} onClick={() => clickFigule(x,y)}/>
         refreshField({fields, store, currentFigure});
@@ -155,8 +209,10 @@ const Field = ({ countField = 5}) => {
         setFigure({fiel, x:5, y:2, figure: blackKing,type: "king", gamer: 2});
         setFigure({fiel, x:5, y:4, figure: blackHorse,type: "horse", gamer: 2});
 
-        /* setFigure({fiel, x:3, y:3, figure: blackKing,type: "king", gamer: 2}); */
+        //set cursor 
+        fiel['33'].html = <Cell key={'33'} style="control_select" onClick={() => clickFigule(3,3)}/>;
 
+        document.addEventListener('keyup', (e) => controlSelector(e), true);
         
         dispatch(setFields(fiel));
     }, []);
