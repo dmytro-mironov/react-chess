@@ -1,5 +1,3 @@
-import Cell from "../Cell";
-import { clickFigule } from "../Field";
 import { checkFieldQueen } from "./Queen";
 
 const showRulesKing = ({fields, currentFigure}) => {
@@ -85,6 +83,7 @@ const showRulesKing = ({fields, currentFigure}) => {
         );
         iterator++;
     }
+    return fields;
 }
 
 export default showRulesKing;

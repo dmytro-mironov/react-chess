@@ -5,6 +5,7 @@ const initialState ={
     turnGamer: 1,
     history: [],
     controlKeyBoardPos: {x: 3, y:3},
+    isMat: false,
 }
 
 const fieldsReducer = (state = initialState, actions) => {
@@ -34,6 +35,11 @@ const fieldsReducer = (state = initialState, actions) => {
             return {
                 ...state,
                 controlKeyBoardPos: actions.payload
+            }
+        case 'SET_MAT':
+            return {
+                ...state,
+                isMat: actions.payload
             }
         default: 
             return state;

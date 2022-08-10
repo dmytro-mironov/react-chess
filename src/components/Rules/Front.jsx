@@ -1,3 +1,5 @@
+import { setMat } from "../../redux/actions/fields";
+import store from "../../redux/store";
 import Cell from "../Cell";
 import { clickFigule } from "../Field";
 
@@ -20,13 +22,19 @@ const showRulesFront = ({fields, currentFigure,x,y}) => {
     coordinates.forEach((elem, index) => {
         if(fields[elem.x+''+elem.y]?.isFigure && currentFigure.gamer !== fields[elem.x+''+elem.y]?.gamer){
 
+            if(fields[elem.x+''+elem.y].type == 'king'){
+                store.dispatch(setMat(true));
+            }
+            
             fields[elem.x+''+elem.y].html = <Cell key={elem.x+''+elem.y} x={elem.x} y={elem.y} style="can_stay" 
                                                                 figure={fields[elem.x+''+elem.y].html.props.figure}
                                                                 onClick={() => clickFigule(elem.x,elem.y)}/>;
             fields[elem.x+''+elem.y].can_stay = true;
 
         }
-    })
+    });
+
+    return fields;
 }
 
 export default showRulesFront;

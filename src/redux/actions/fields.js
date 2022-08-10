@@ -22,3 +22,8 @@ export const setControl = (position) => ({
     type: "SET_CONTROL",
     payload: position
 });
+
+export const setMat = (mat) => ({
+    type: "SET_MAT",
+    payload: mat,
+});

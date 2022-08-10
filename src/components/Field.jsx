@@ -18,7 +18,6 @@ import showRulesHorse from "./Rules/Horse";
 import showRulesQueen from "./Rules/Queen";
 import showRulesKing from "./Rules/King";
 
-
 const controlSelector = (e) => {
 
     const fields = store.getState().fieldsReducer.fields;
@@ -78,8 +77,10 @@ export const clickFigule = (x,y) => {
 
     const turnGamer = store.getState().fieldsReducer.turnGamer;
     const chooseFiel = store.getState().fieldsReducer.chooseFiel;
-    const fields = store.getState().fieldsReducer.fields;
+    let fields = store.getState().fieldsReducer.fields;
+    let isMat = store.getState().fieldsReducer.isMat;
 
+    if(isMat) return;
 
     let currentFigure = fields[x+''+y];
     //field choose and can move
@@ -103,11 +104,21 @@ export const clickFigule = (x,y) => {
             to: {x,y},
             figure: currentFigure.type
         }));
+
+        
+        if(currentFigure.type == 'front'){
+            showRulesFront({fields,currentFigure,x,y});
+        }else if(currentFigure.type == 'horse'){
+            showRulesHorse({fields,currentFigure,x,y});
+        }else if(currentFigure.type == 'queen'){
+            showRulesQueen({fields,currentFigure,x,y});
+        }else if(currentFigure.type == 'king'){
+            showRulesKing({fields,currentFigure,x,y});
+        }
         
         store.dispatch(setTurnGamer(currentFigure.gamer));
         refreshField({fields, store, currentFigure});
-
-
+        console.dir(store.getState().fieldsReducer.isMat);
 
     }else if(chooseFiel && currentFigure?.change_place == true){
         //change place beetwen queen and king
@@ -138,16 +149,16 @@ export const clickFigule = (x,y) => {
 
     }else if(currentFigure?.isFigure && !chooseFiel && currentFigure.gamer == turnGamer){
         //select figure
-        currentFigure.html = <Cell key={x+''+y} x={x} y={y} figure={currentFigure.html.props.figure} style="choose" onClick={() => clickFigule(x,y)}/>
+        currentFigure.html = <Cell key={x+''+y} figure={currentFigure.html.props.figure} style="choose" onClick={() => clickFigule(x,y)}/>
 
         if(currentFigure.type == 'front' && currentFigure.x <= 5 && currentFigure.x >= 0){
-            showRulesFront({fields,currentFigure,x,y});
+            fields = showRulesFront({fields,currentFigure,x,y});
         }else if(currentFigure.type == 'horse' && currentFigure.x <= 5 && currentFigure.x >= 0){
-            showRulesHorse({fields,currentFigure,x,y});
+            fields = showRulesHorse({fields,currentFigure,x,y});
         }else if(currentFigure.type == 'queen' && currentFigure.x <= 5 && currentFigure.x >= 0){
-            showRulesQueen({fields,currentFigure,x,y});
+            fields = showRulesQueen({fields,currentFigure,x,y});
         }else if(currentFigure.type == 'king' && currentFigure.x <= 5 && currentFigure.x >= 0){
-            showRulesKing({fields,currentFigure,x,y});
+            fields = showRulesKing({fields,currentFigure,x,y});
         }
 
         store.dispatch(setFields(fields));
@@ -155,7 +166,7 @@ export const clickFigule = (x,y) => {
 
     }else if(currentFigure?.isFigure && chooseFiel && currentFigure.x == chooseFiel.x && currentFigure.y == chooseFiel.y){
         //clear all if you click again
-        currentFigure.html = <Cell key={x+''+y} x={x} y={y} figure={currentFigure.html.props.figure} onClick={() => clickFigule(x,y)}/>
+        currentFigure.html = <Cell key={x+''+y} figure={currentFigure.html.props.figure} onClick={() => clickFigule(x,y)}/>
         refreshField({fields, store, currentFigure});
     }
 }
@@ -172,8 +183,8 @@ const setFigure = ({fiel, x,y, figure, type, gamer}) => {
 const Field = ({ countField = 5}) => {
 
     const dispatch = useDispatch();
-    const { fields } = useSelector(({fieldsReducer}) => {
-        return { fields:fieldsReducer.fields }
+    const { fields, isMat, turnGamer } = useSelector(({fieldsReducer}) => {
+        return { fields:fieldsReducer.fields, isMat: fieldsReducer.isMat, turnGamer: fieldsReducer.turnGamer }
     });
 
 
@@ -191,8 +202,8 @@ const Field = ({ countField = 5}) => {
         }
         
         setFigure({fiel, x:1, y:4, figure: whiteHorse,type: "horse", gamer: 1});
-        setFigure({fiel, x:1, y:2, figure: whiteKing,type: "king", gamer: 1});
-        setFigure({fiel, x:1, y:3, figure: whiteQueen,type: "queen", gamer: 1});
+        setFigure({fiel, x:1, y:3, figure: whiteKing,type: "king", gamer: 1});
+        setFigure({fiel, x:1, y:2, figure: whiteQueen,type: "queen", gamer: 1});
         setFigure({fiel, x:2, y:1, figure: whitePawn,type: "front", gamer: 1});
         setFigure({fiel, x:2, y:2, figure: whitePawn,type: "front", gamer: 1});
         setFigure({fiel, x:2, y:3, figure: whitePawn,type: "front", gamer: 1});
@@ -205,8 +216,8 @@ const Field = ({ countField = 5}) => {
         setFigure({fiel, x:4, y:3, figure: blackPawn,type: "front", gamer: 2});
         setFigure({fiel, x:4, y:4, figure: blackPawn,type: "front", gamer: 2});
         setFigure({fiel, x:4, y:5, figure: blackPawn,type: "front", gamer: 2});
-        setFigure({fiel, x:5, y:3, figure: blackQueen,type: "queen", gamer: 2});
-        setFigure({fiel, x:5, y:2, figure: blackKing,type: "king", gamer: 2});
+        setFigure({fiel, x:5, y:2, figure: blackQueen,type: "queen", gamer: 2});
+        setFigure({fiel, x:5, y:3, figure: blackKing,type: "king", gamer: 2});
         setFigure({fiel, x:5, y:4, figure: blackHorse,type: "horse", gamer: 2});
 
         //set cursor 
@@ -218,9 +229,17 @@ const Field = ({ countField = 5}) => {
     }, []);
     
     return (
-        <div className="board">
-            {Object.keys(fields).map((key,index)=> fields[key].html)}
+        <div style={{'width': '100%'}}>
+            <div className="board">
+                {Object.keys(fields).map((key,index)=> fields[key].html)}
+            </div>
+            <div>
+                {true ? (
+                    <div>Player {turnGamer == 1 ? 2 : 1} made mat</div>
+                ) : ''}
+            </div>
         </div>
+
     );
 }
 

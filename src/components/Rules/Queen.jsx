@@ -1,16 +1,22 @@
+import { setMat } from "../../redux/actions/fields";
+import store from "../../redux/store";
 import Cell from "../Cell";
 import { clickFigule } from "../Field";
 
-
 export const checkFieldQueen = (field, x, y, currentFigure, check = true) => {
-
     //check is field and field is not our figure
+
+    
     if(field?.gamer !== currentFigure.gamer && field && check){
         field.html = <Cell key={x+''+y} style="can_stay" figure={field.html?.props.figure} 
                                     onClick={() => clickFigule(x, y)}/>;
         field.can_stay = true;
         if(field.gamer !== currentFigure.gamer && field?.isFigure){
             check = false;
+        }
+        //check is mat
+        if(field.gamer !== currentFigure.gamer && field.isFigure && (currentFigure.type == 'queen' || currentFigure.type == 'king')){
+            store.dispatch(setMat(true));
         }
     }else if((field?.type === 'queen' || field?.type === 'king') && field?.gamer == currentFigure.gamer){
         //check to possible change beetwen king and queen
@@ -21,6 +27,7 @@ export const checkFieldQueen = (field, x, y, currentFigure, check = true) => {
     }else{
         check = false;
     }
+
     return check;
 }
 
@@ -38,6 +45,7 @@ const showRulesQueen = ({fields, currentFigure}) => {
         topR: true,
         right: true,
     };
+
     while(iterator < 5){
         const localIterator = iterator;
         //bottom right
@@ -46,66 +54,68 @@ const showRulesQueen = ({fields, currentFigure}) => {
             currentFigure.x+localIterator, 
             currentFigure.y+localIterator,
             currentFigure,
-            coordinates.bottomR
+            coordinates.bottomR,
         );
         //bottom
         coordinates.bottom = checkFieldQueen(
-            fields[parseInt(currentFigure.x+localIterator)+''+parseInt(currentFigure.y)], 
+            fields[currentFigure.x+localIterator+''+parseInt(currentFigure.y)], 
             currentFigure.x+localIterator, 
             parseInt(currentFigure.y),
             currentFigure,
-            coordinates.bottom
+            coordinates.bottom,
         );
         //bottom left
         coordinates.bottomL = checkFieldQueen(
-            fields[parseInt(currentFigure.x+localIterator)+''+parseInt(currentFigure.y-localIterator)], 
+            fields[currentFigure.x+localIterator+''+parseInt(currentFigure.y-localIterator)], 
             currentFigure.x+localIterator, 
             currentFigure.y-localIterator,
             currentFigure,
-            coordinates.bottomL
+            coordinates.bottomL,
         );
         //left
         coordinates.left = checkFieldQueen(
-            fields[parseInt(currentFigure.x)+''+parseInt(currentFigure.y-localIterator)], 
+            fields[currentFigure.x+''+parseInt(currentFigure.y-localIterator)], 
             currentFigure.x, 
             currentFigure.y-localIterator,
             currentFigure,
-            coordinates.left
+            coordinates.left,
         );
          //left top
          coordinates.topL = checkFieldQueen(
-            fields[parseInt(currentFigure.x-localIterator)+''+parseInt(currentFigure.y-localIterator)], 
+            fields[currentFigure.x-localIterator+''+parseInt(currentFigure.y-localIterator)], 
             currentFigure.x-localIterator, 
             currentFigure.y-localIterator,
             currentFigure,
-            coordinates.topL
+            coordinates.topL,
         );
         //top
         coordinates.top = checkFieldQueen(
-            fields[parseInt(currentFigure.x-localIterator)+''+parseInt(currentFigure.y)], 
+            fields[currentFigure.x-localIterator+''+parseInt(currentFigure.y)], 
             currentFigure.x-localIterator, 
             currentFigure.y,
             currentFigure,
-            coordinates.top
+            coordinates.top,
         );
         //right top
         coordinates.topR = checkFieldQueen(
-            fields[parseInt(currentFigure.x-localIterator)+''+parseInt(currentFigure.y+localIterator)], 
+            fields[currentFigure.x-localIterator+''+parseInt(currentFigure.y+localIterator)], 
             currentFigure.x-localIterator, 
             currentFigure.y+localIterator,
             currentFigure,
-            coordinates.topR
+            coordinates.topR,
         );
         //right
         coordinates.right = checkFieldQueen(
-            fields[parseInt(currentFigure.x)+''+parseInt(currentFigure.y+localIterator)], 
+            fields[currentFigure.x+''+parseInt(currentFigure.y+localIterator)], 
             currentFigure.x, 
             currentFigure.y+localIterator,
             currentFigure,
-            coordinates.right
+            coordinates.right,
         );
         iterator++;
     }
+    
+    return fields;
     
 }
 
