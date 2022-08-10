@@ -1,24 +1,8 @@
 import Cell from "../Cell";
 import { clickFigule } from "../Field";
+import { checkFieldQueen } from "./Queen";
 
-
-export const checkFieldQueen = (field, x, y, currentFigure, check = true) => {
-
-    if(field?.gamer !== currentFigure.gamer && field && check){
-        field.html = <Cell key={x+''+y} style="can_stay" figure={field.html?.props.figure} 
-                                    onClick={() => clickFigule(x, y)}/>;
-        field.can_stay = true;
-    }else if(field?.type === 'queen' || field?.type === 'king'){
-        field.html = <Cell key={x+''+y} style="can_stay" figure={field.html?.props.figure} 
-                                    onClick={() => clickFigule(x, y)}/>;
-        field.change_place = true;
-    }else{
-        check = false;
-    }
-    return check;
-}
-
-const showRulesQueen = ({fields, currentFigure}) => {
+const showRulesKing = ({fields, currentFigure}) => {
 
     let iterator = 1;
 
@@ -32,7 +16,8 @@ const showRulesQueen = ({fields, currentFigure}) => {
         topR: true,
         right: true,
     };
-    while(iterator < 5){
+
+    while(iterator < 2){
         const localIterator = iterator;
         //bottom right
         coordinates.bottomR = checkFieldQueen(
@@ -100,7 +85,6 @@ const showRulesQueen = ({fields, currentFigure}) => {
         );
         iterator++;
     }
-    
 }
 
-export default showRulesQueen;
+export default showRulesKing;

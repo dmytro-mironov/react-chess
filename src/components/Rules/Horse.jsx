@@ -14,7 +14,8 @@ const showRulesHorse = ({fields, currentFigure,x,y}) => {
 
     coordinates.forEach((elem, index) => {
         if(fields[elem.x+''+elem.y]?.gamer !== currentFigure.gamer && fields[elem.x+''+elem.y]){
-            fields[elem.x+''+elem.y].html = <Cell key={elem.x+''+elem.y} x={x+direction} y={y-1} style="can_stay" figure={fields[elem.x+''+elem.y].html.props.figure} onClick={() => clickFigule(elem.x, elem.y)}/>;
+            fields[elem.x+''+elem.y].html = <Cell key={elem.x+''+elem.y} x={x+direction} y={y-1} style="can_stay" figure={fields[elem.x+''+elem.y].html.props.figure} 
+                                            onClick={() => clickFigule(elem.x, elem.y)}/>;
             fields[elem.x+''+elem.y].can_stay = true;
         }
     })
