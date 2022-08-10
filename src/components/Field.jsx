@@ -118,7 +118,6 @@ export const clickFigule = (x,y) => {
         
         store.dispatch(setTurnGamer(currentFigure.gamer));
         refreshField({fields, store, currentFigure});
-        console.dir(store.getState().fieldsReducer.isMat);
 
     }else if(chooseFiel && currentFigure?.change_place == true){
         //change place beetwen queen and king

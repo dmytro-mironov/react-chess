@@ -10,7 +10,7 @@ const Cell = React.memo(({x, y, figure, style, onClick}) => {
     });
 
     return (
-        <div className={cellStyle} onClick={onClick}>{/* {x+''+y} */}
+        <div className={cellStyle} onClick={onClick}>
             <img className="img_figure" src={figure} alt="" />
         </div>
     );

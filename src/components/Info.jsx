@@ -20,7 +20,7 @@ const Info = () => {
         5: 'e',
     }
     return (
-        <div style={{'min-width': '200px'}}>
+        <div style={{'width': '200px'}}>
             <div>Player turn: {player[turnGamer]}</div>
             <div className="history">
                 <ul>
